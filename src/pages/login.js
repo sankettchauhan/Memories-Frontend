@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { saveUser } from "../util/localStorage.util";
 import bg from "../images/bg.jpg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { login, register, verify } from "../axios/requests.axios";
+import Signup from "../components/Signup";
+import Login from "../components/Login";
+import OTP from "../components/OTP";
+import Snack from "../components/Snack";
 
-export default function Login() {
+export default function LoginPage() {
   const navigate = useNavigate();
   const [state, setState] = useState({
     login: false,
@@ -19,8 +23,8 @@ export default function Login() {
   });
   const [snack, setSnack] = useState({
     show: false,
-    message: null,
-    type: null,
+    message: "",
+    type: "",
   });
 
   console.log(state);
@@ -29,6 +33,13 @@ export default function Login() {
   const showLogin = () => setState({ ...state, login: true, signup: false });
   const showSignup = () => setState({ ...state, login: false, signup: true });
   const showOTP = () => setState({ ...state, otp: true });
+
+  const handleErorr = (error) =>
+    setSnack({
+      show: true,
+      message: "Something went wrong. Please try again.",
+      type: "error",
+    });
 
   const handleLogin = async (e) => {
     try {
@@ -49,20 +60,25 @@ export default function Login() {
   };
 
   const handleSignup = async (e) => {
-    e.preventDefault();
-    const resSignup = await register({
-      name: user.name,
-      phone: user.phone,
-    });
-    const {
-      data: {
-        data: { userId },
-        message: messageSent,
-      },
-    } = resSignup;
-    setUser((user) => ({ ...user, userId }));
-    console.log(messageSent);
-    showOTP();
+    try {
+      e.preventDefault();
+      const resSignup = await register({
+        name: user.name,
+        phone: user.phone,
+      });
+      const {
+        data: {
+          data: { userId },
+          message: messageSent,
+        },
+      } = resSignup;
+      setUser((user) => ({ ...user, userId }));
+      console.log(messageSent);
+      showOTP();
+    } catch (err) {
+      console.log(err);
+      handleErorr();
+    }
   };
 
   const handleSubmit = (e) => (state.login ? handleLogin(e) : handleSignup(e));
@@ -85,6 +101,7 @@ export default function Login() {
       }
     } catch (error) {
       console.log("error");
+      handleErorr();
       console.log(error);
     }
   };
@@ -93,100 +110,42 @@ export default function Login() {
     setUser((state) => ({ ...state, [e.target.name]: e.target.value }));
   };
 
+  const inputClasses = "rounded-md px-5 py-2 text-black text-2xl mb-2";
+
   return (
     <div
-      className={`h-screen w-screen relative grid place-content-center text-white`}
+      className={`h-screen w-screen relative grid place-content-center text-white relative`}
     >
-      {snack.show && <div>{snack.message}</div>}
+      {<Snack {...snack} setSnack={setSnack} classes="top-[50px]" />}
       <img
         src={bg}
         alt="library"
         className="absolute -z-10 h-screen w-screen object-cover"
       />
-      <div className="z-10 glass-card px-16 py-20">
+      <div className="z-10 glass-card px-4 md:px-16 py-16 md:py-20 w-[350px] md:w-auto">
         {state.login ? (
-          <>
-            <h1 className="text-4xl mb-8 font-bold leading-[0.8]">
-              Login to <span className="font-[gt-super]">Memories</span>
-            </h1>
-            <input
-              className="rounded-md px-5 py-4 text-black text-2xl"
-              type="text"
-              placeholder="Enter phone number"
-              maxLength="10"
-              name="phone"
-              value={user.phone}
-              onChange={handleChange}
-            />
-          </>
+          <Login
+            user={user}
+            handleChange={handleChange}
+            otp={state.otp}
+            showSignup={showSignup}
+            inputClasses={inputClasses}
+          />
         ) : (
-          <>
-            <h1 className="text-4xl mb-8 font-bold leading-[0.8]">
-              Register on <span className="font-[gt-super]">Memories</span>
-            </h1>
-            <input
-              className="rounded-md px-5 py-4 text-black text-2xl"
-              type="text"
-              placeholder="Enter name"
-              name="name"
-              value={user.name}
-              onChange={handleChange}
-            />
-            <input
-              className="rounded-md px-5 py-4 text-black text-2xl"
-              type="text"
-              placeholder="Enter phone number"
-              maxLength="10"
-              name="phone"
-              value={user.phone}
-              onChange={handleChange}
-            />
-          </>
-        )}
-
-        {state.otp && (
-          <input
-            className="rounded-md px-5 py-4 text-black text-2xl"
-            type="text"
-            placeholder="Enter OTP"
-            maxLength="6"
-            name="otp"
-            value={user.otp}
-            onChange={handleChange}
+          <Signup
+            user={user}
+            handleChange={handleChange}
+            otp={state.otp}
+            showLogin={showLogin}
+            inputClasses={inputClasses}
           />
         )}
 
-        {state.login ? (
-          <>
-            <p>
-              Don't have an account
-              <span onClick={showSignup}>Register here</span>
-            </p>
-          </>
-        ) : (
-          <>
-            <p>
-              Already have an account
-              <span onClick={showLogin}>Login here</span>
-            </p>
-          </>
-        )}
-
-        {state.otp ? (
-          <button
-            className="bg-white text-black uppercase w-[fit-content] px-4 py-1 rounded-md"
-            onClick={handleVerify}
-          >
-            Verify OTP
-          </button>
-        ) : (
-          <button
-            className="bg-white text-black uppercase w-[fit-content] px-4 py-1 rounded-md"
-            onClick={handleSubmit}
-          >
-            Send OTP
-          </button>
-        )}
+        <OTP
+          otp={state.otp}
+          handleSubmit={handleSubmit}
+          handleVerify={handleVerify}
+        />
       </div>
     </div>
   );

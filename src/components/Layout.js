@@ -5,11 +5,11 @@ import Nav from "./Nav";
 export default function Layout() {
   return (
     <>
-      <Nav />
-      <div className="px-56">
+      <div className="min-h-screen flex flex-col">
+        <Nav />
         <Outlet />
+        <Footer />
       </div>
-      <Footer />
     </>
   );
 }

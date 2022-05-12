@@ -1,7 +1,7 @@
-export default function OTPInput({ user, handleChange }) {
+export default function OTPInput({ user, handleChange, inputClasses }) {
   return (
     <input
-      className="rounded-md px-5 py-4 text-black text-2xl"
+      className={`${inputClasses}`}
       type="text"
       placeholder="Enter OTP"
       maxLength="6"

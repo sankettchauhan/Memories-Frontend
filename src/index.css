@@ -1,6 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&family=Water+Brush&family=Caveat&family=Architects+Daughter&display=swap');
+:root{
+    --primary-color:#C4DDFF;
+    --secondary-color:#001D6E;
+    --accent-color:#7FB5FF;
+    --yellow-color:#FEE2C5;
+    --font-water-brush:'Water Brush';
+    --font-dancing-script:'Dancing Script';
+    --font-caveat:'Caveat';
+    --font-architect:'Architects Daughter';
+}
+
+body{
+    background-color: var(--primary-color);
+    color:var(--secondary-color)
+}
 
 .glass-card {
     background: rgba(0, 0, 0, 0.2);

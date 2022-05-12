@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function OTP({ otp, handleSubmit, handleVerify }) {
-  if (otp) {
+  if (!otp) {
     return (
       <button
         className="bg-white text-black uppercase w-[fit-content] px-4 py-1 rounded-md"
