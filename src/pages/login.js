@@ -55,6 +55,7 @@ export default function LoginPage() {
       console.log(messageSent);
       showOTP();
     } catch (err) {
+      handleErorr();
       console.log(err);
     }
   };
